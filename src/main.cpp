@@ -3,9 +3,11 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+
 using namespace std;
-const int screenWidth = 750;
-const int screenHeight = 750;
+
+const int screenWidth = 800;
+const int screenHeight = 800;
 int cellSize = 25;
 int numOfrows = screenWidth / cellSize;
 int numOfcols = screenHeight / cellSize;
