@@ -14,6 +14,8 @@ int numOfcols = screenHeight / cellSize;
 
 vector<vector<int>> grid(numOfrows, vector<int>(numOfcols));
 vector<vector<int>> nextGen(numOfrows, vector<int>(numOfcols));
+bool simulationRunning = false; // Flag to track simulation state
+
 void drawGrid()
 {
     Color color;
@@ -23,7 +25,7 @@ void drawGrid()
         {
             if (grid[row][col] == 1)
             {
-                color = Color{0, 255, 0, 255};
+                color = Color{0, 228, 48, 255};
             }
             else
             {
@@ -33,6 +35,7 @@ void drawGrid()
         }
     }
 }
+
 int countLiveNeighbors(int x, int y)
 {
     int liveNeighbors = 0;
@@ -54,9 +57,9 @@ int countLiveNeighbors(int x, int y)
     }
     return liveNeighbors;
 }
+
 void rules()
 {
-
     for (int i = 0; i < numOfrows; ++i)
     {
         for (int j = 0; j < numOfcols; ++j)
@@ -78,6 +81,7 @@ void rules()
         }
     }
 }
+
 void genRandomValue(int cols, int rows)
 {
     for (int i = 0; i < cols; ++i)
@@ -88,18 +92,55 @@ void genRandomValue(int cols, int rows)
         }
     }
 }
+void evenHandle(int FPS)
+{
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        Vector2 mousePosition = GetMousePosition();
+        int col = mousePosition.x / cellSize;
+        int row = mousePosition.y / cellSize;
+
+        if (row >= 0 && row < numOfrows && col >= 0 && col < numOfcols)
+        {
+            // Toggle the cell's state between alive (1) and dead (0)
+            grid[row][col] = !grid[row][col];
+        }
+    }
+    else if (IsKeyPressed(KEY_SPACE))
+    {
+        simulationRunning = !simulationRunning;
+    }
+    else if (simulationRunning == false)
+    {
+        rules();
+        grid = nextGen;
+    }
+    else if (IsKeyPressed(KEY_F))
+    {
+        FPS = FPS + 2;
+        SetTargetFPS(FPS);
+    }
+    else if (IsKeyPressed(KEY_S))
+    {
+        FPS = FPS - 2;
+        SetTargetFPS(FPS);
+    }
+}
+
 int main()
 {
     srand(time(0));
     int FPS = 12;
-    InitWindow(screenWidth, screenHeight, "Game of life");
+    InitWindow(screenWidth, screenHeight, "Game of Life");
     SetTargetFPS(FPS);
-    genRandomValue(numOfrows, numOfcols);
+    genRandomValue(numOfcols, numOfrows);
 
     while (!WindowShouldClose())
     {
         rules();
         grid = nextGen;
+        // evenHandle(FPS);
 
         BeginDrawing();
         ClearBackground(GRAY);
